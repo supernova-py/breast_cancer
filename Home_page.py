@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import matplotlib.image as mpimg
 from PIL import Image
+import seaborn as sns
 
 
 st.set_page_config(
@@ -33,3 +34,4 @@ st.markdown(
     More information can be found by clicking in the README.
     """
 )
+

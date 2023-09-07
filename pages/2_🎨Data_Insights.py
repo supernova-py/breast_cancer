@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
 
 #from telescopes.main_info import info
 #from utils.plots import plot_galaxies
@@ -12,7 +13,7 @@ st.markdown("Developed by __supernova__: https://github.com/supernova-py")
 
 #Differentiate vs Grade
 
-st.header('How does the level of tumor differentiation relate to its grade?')
+st.header('1. Question: How does the level of tumor differentiation relate to its grade?')
 
 st.markdown("""
 ### Think of tumor behavior as getting grades – like in school. We found:
@@ -36,3 +37,5 @@ plt.title("Differentiate vs Grade")
 plt.xlabel("Grade")
 plt.ylabel("differentiate")
 st.pyplot(fig)
+
+st.image('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fowise.net%2Fus%2Fwp-content%2Fuploads%2Fsites%2F4%2F2020%2F10%2FScreenshot-2020-09-30-at-13.32.05-1024x607.png&f=1&nofb=1&ipt=4f8e408b0f5ac8021ab1f62c91af5681bd097b9fd6f1838961e39a8b131d677c&ipo=images')

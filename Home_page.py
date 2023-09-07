@@ -9,8 +9,8 @@ st.set_page_config(
     page_icon="👋",
     layout="centered")
 
-image = Image.open('microscope.png')
-st.image(image)
+#image = Image.open('microscope_1.png')
+#st.image(image)
 
 # Main Description
 st.markdown("## 👋 Welcome to BreastCancerViz, your ultimate tool to explore and understand breast cancer datasets!")

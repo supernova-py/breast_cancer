@@ -48,61 +48,42 @@ st.image('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fowise.net%
 age_vs_grade = sns.displot(data=df, x="Age", hue="Grade", multiple="stack", kind="kde")
 st.pyplot(age_vs_grade)
 
-
-
-# Extract numerical and categorical columns
-numerical_features = ['Age', 'Tumor Size']
-categorical_features = ['Race']
-
-# Define preprocessing steps for numerical and categorical columns
-numerical_transformer = Pipeline(steps=[('scaler', StandardScaler())])
-categorical_transformer = Pipeline(steps=[
-    ('onehot', OneHotEncoder(handle_unknown='ignore'))
-])
-
-# Combine preprocessing for both types of features
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', numerical_transformer, numerical_features),
-        ('cat', categorical_transformer, categorical_features)
-    ])
-
-# Streamlit app
-st.title('Breast Cancer Clustering')
-
-# Sidebar for K-Means parameters
-st.sidebar.title('K-Means Clustering')
-n_clusters = st.sidebar.slider('Select Number of Clusters (K)', 2, 6, 3)
-
-# Perform K-Means clustering
-pipeline = Pipeline([
-    ('preprocessor', preprocessor),
-    ('kmeans', KMeans(n_clusters=n_clusters, random_state=0))
-])
-
-df['Cluster'] = pipeline.fit_predict(df)
-
-# Create a scatter plot of the clustered data with a legend
-st.write('## Scatter Plot of Clustered Data')
-plt.figure(figsize=(10, 6))
-scatter = plt.scatter(df['Age'], df['Tumor Size'], c=df['Cluster'], cmap='viridis', s=100)
-plt.xlabel('Age')
-plt.ylabel('Tumor Size')
-plt.title(f'K-Means Clustering (K={n_clusters})')
-
-# Add a legend
-handles, labels = scatter.legend_elements()
-legend = plt.legend(handles, labels, title='Clusters')
-plt.gca().add_artist(legend)
-
-st.pyplot(plt)
-
-# Data Table with Cluster Labels
-st.write('## Data Table with Cluster Labels')
-st.dataframe(df)
-
 #6th stage vs t stage
 
-#n stage vs node positive
+#t stage vs node positive
+# Function to create a scatter plot
+def create_scatterplot(df, x_column, y_column, color_column, title=None):
+    plt.figure(figsize=(10, 6))
 
+    # Filter the DataFrame to exclude rows with missing or invalid values in x_column and y_column
+    df_filtered = df.dropna(subset=[x_column, y_column])
+
+    sns.scatterplot(data=df_filtered, x=x_column, y=y_column, hue=color_column)
+    plt.xlabel(x_column)
+    plt.ylabel(y_column)
+    if title:
+        plt.title(title)
+    plt.grid(True)
+    plt.legend(title=color_column)
+    st.pyplot(plt)
+
+# Streamlit app
+st.title('Breast Cancer Data Visualization')
+
+# Load your dataset from a CSV file
+# Replace 'your_dataset.csv' with the actual path to your CSV file
+df = pd.read_csv('Breast_Cancer.csv')
+
+# Sidebar for selecting columns
+st.sidebar.title('Column Selection')
+x_column = st.sidebar.selectbox('Select X-axis Column:', df.columns)
+y_column = st.sidebar.selectbox('Select Y-axis Column:', df.columns)
+color_column = st.sidebar.selectbox('Select Color Column (for color coding):', df.columns)
+
+# Plot the scatter plot using the selected columns and color column
+create_scatterplot(df, x_column, y_column, color_column, f'Scatter Plot: {x_column} vs. {y_column}')
+
+# Display the DataFrame
+st.write('## Data Table')
+st.dataframe(df)
 #t stage vs tumor size

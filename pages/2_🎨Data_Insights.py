@@ -199,3 +199,25 @@ st.dataframe(df)
 
 #EXPERIMENTAL
 
+# Encode the 'T Stage ' column using label encoding
+label_encoder = LabelEncoder()
+df['T Stage '] = label_encoder.fit_transform(df['T Stage '])
+
+# Select the relevant columns
+X = df[['T Stage ', 'Reginol Node Positive']]
+y = df['Tumor Size']  # Use 'Predicted Tumor Size' for the y-axis
+
+# Create a bar chart to show the average 'Predicted Tumor Size' for each 'T Stage ' and 'Reginol Node Positive' combination
+plt.figure(figsize=(12, 6))
+ax = sns.barplot(data=df, x='T Stage ', y='Tumor Size', hue='Reginol Node Positive', palette='viridis')
+
+# Customize the plot
+plt.xlabel('T Stage ')
+plt.ylabel('Average Predicted Tumor Size')
+plt.title('Average Predicted Tumor Size by T Stage  and Reginol Node Positive')
+
+# Display the legend outside the box
+legend = ax.legend(title='Reginol Node Positive', loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=9)
+
+# Display the plot in Streamlit
+st.pyplot(plt)

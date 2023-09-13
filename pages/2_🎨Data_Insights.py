@@ -78,75 +78,61 @@ plt.title("Age vs. Grade Distribution")
 # Show the plot
 st.pyplot(age_vs_grade_stack)
 
-#6th stage vs t stage
+#tumor vs t stage
 
-#T stage vs Reginol Node Positive vs Tumor Size
+# Streamlit header with a question and smiley emoji
+st.header('2. Question: How does tumor size relate to T stage? ⏬')
+
+# Streamlit markdown text with explanation and bullet points
+st.markdown("""
+- The correlation between T stage and tumor size in cancer typically reflects the extent of tumor growth or invasion into nearby tissues. 📈 T stage is a classification system used to describe the primary tumor's size and extent of invasion in cancer staging, with higher T stages indicating larger tumors and more extensive invasion.
+
+- In general, you can expect to see a positive correlation between T stage and tumor size, meaning that as the T stage increases (indicating a more advanced stage), the tumor size is likely to be larger. This is because higher T stages often correspond to larger tumors that have grown more extensively into nearby tissues or organs. 📊
+
+    ![Tumor Stages](https://almostadoctor.co.uk/wp-content/uploads/2017/06/stages-of-bowel-cancer.png)
+
+- However, it's important to note that the correlation may not be perfect, and there can be variations based on the specific type of cancer and other factors. Some cancers may have a stronger correlation between T stage and tumor size, while others may have more variability. 🔄
+
+- In a dataset or clinical study, you can assess the correlation between T stage and tumor size using statistical methods, such as calculating the Pearson correlation coefficient. A positive correlation coefficient would indicate a positive correlation between the two variables. 📊
+
+- Keep in mind that while T stage and tumor size are related, they are not the same thing. T stage is part of the cancer staging system and considers factors like tumor size, invasion into nearby tissues, and lymph node involvement, among others, to provide a more comprehensive assessment of the extent of cancer. Tumor size, on the other hand, specifically refers to the physical size of the primary tumor. 🩺
+""")
+
+
+# Create a Streamlit app
+st.title('T Stage vs. Predicted Tumor Size')
+
+# Load your DataFrame here, assuming it's named 'df'
+# df = pd.read_csv('your_data.csv')
+
 # Encode the 'T Stage' column using label encoding
 label_encoder = LabelEncoder()
 df['T Stage '] = label_encoder.fit_transform(df['T Stage '])
 
-# Add some variation to 'Reginol Node Positive' while preserving the overall patterns
-df['Reginol Node Positive'] = df['Reginol Node Positive'] + np.random.uniform(-0.2, 0.2, size=len(df))
-
 # Select the relevant columns
-X = df[['T Stage ', 'Reginol Node Positive']]
+X = df[['T Stage ']]
 y = df['Tumor Size']
 
 # Fit a linear regression model
 model = LinearRegression()
 model.fit(X, y)
 
-# Predict Tumor Size based on T Stage and Reginol Node Positive
+# Predict Tumor Size based on T Stage
 df['Predicted Tumor Size'] = model.predict(X)
 
 # Create a scatter plot with regression line
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=df, x='T Stage ', y='Predicted Tumor Size', hue='Reginol Node Positive', palette='viridis', s=100)
-sns.lineplot(data=df, x='T Stage ', y='Predicted Tumor Size', color='red', linewidth=2, label='Regression Line')
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.scatterplot(data=df, x='T Stage ', y='Predicted Tumor Size', palette='viridis', s=100, ax=ax)
+sns.lineplot(data=df, x='T Stage ', y='Predicted Tumor Size', color='red', linewidth=2, label='Regression Line', ax=ax)
 
 # Customize the plot
-plt.xlabel('T Stage')
-plt.ylabel('Predicted Tumor Size')
-plt.title('T Stage vs. Predicted Tumor Size with Reginol Node Positive (with Variation)')
+ax.set_xlabel('T Stage')
+ax.set_ylabel('Predicted Tumor Size')
+ax.set_title('T Stage vs. Predicted Tumor Size')
 
-# Display the plot in Streamlit
-st.pyplot(plt)
+# Display the Streamlit app
+st.pyplot(fig)
 
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import LabelEncoder
-from sklearn.manifold import TSNE
-from sklearn.cluster import KMeans
-
-# Encode the 'T Stage ' column using label encoding
-label_encoder = LabelEncoder()
-df['T Stage '] = label_encoder.fit_transform(df['T Stage '])
-
-# Select the relevant columns for clustering
-X = df[['Age', 'T Stage ', 'Tumor Size', 'Reginol Node Positive']]
-
-# Perform dimensionality reduction with t-SNE
-tsne = TSNE(n_components=2, random_state=42)
-X_tsne = tsne.fit_transform(X)
-
-# Cluster data using K-Means
-kmeans = KMeans(n_clusters=3, random_state=42)
-df['Cluster'] = kmeans.fit_predict(X)
-
-# Create a scatter plot of the reduced dimensions with cluster coloring
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=df, x=X_tsne[:, 0], y=X_tsne[:, 1], hue='Cluster', palette='viridis', s=100)
-
-# Customize the plot
-plt.xlabel('t-SNE Dimension 1')
-plt.ylabel('t-SNE Dimension 2')
-plt.title('t-SNE Scatter Plot with Clusters')
-
-# Add legends
-plt.legend(title='Cluster', loc='upper right')
-
-# Display the plot in Streamlit
-st.pyplot(plt)
 
 #already bored interactive
 def create_scatterplot(df, x_column, y_column, color_column, title=None):
@@ -221,3 +207,10 @@ legend = ax.legend(title='Reginol Node Positive', loc='upper center', bbox_to_an
 
 # Display the plot in Streamlit
 st.pyplot(plt)
+
+#experimental
+import streamlit as st
+import pandas as pd
+import pygwalker as pyg
+from streamlit_jupyter import StreamlitPatcher
+

@@ -8,15 +8,7 @@ st.set_page_config(
     page_title="Tableau",
     layout="wide"
 )
- 
-# Add Title
 st.title("Play around with raw data")
- 
-# Import your data
 df = pd.read_csv("Breast_Cancer.csv")
- 
-# Generate the HTML using Pygwalker
 pyg_html = pyg.walk(df, return_html=True)
- 
-# Embed the HTML into the Streamlit app
 components.html(pyg_html, height=1000, scrolling=True)

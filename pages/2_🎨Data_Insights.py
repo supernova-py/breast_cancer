@@ -27,10 +27,10 @@ def section_1(df):
     - So, nicer-behaved tumors usually get lower grades, while others vary. This helps us understand breast cancer.
     """)
     
-    # Create a pivot table to summarize the data
+    
     pivot_table = df.pivot_table(index='differentiate', columns='Grade', aggfunc='size', fill_value=0)
     
-    # Create a heatmap
+    
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(pivot_table, annot=True, fmt='d', cmap='YlGnBu', cbar=True)
     plt.title("Differentiate vs Grade")
@@ -56,7 +56,7 @@ def section_2(df):
     In summary, the density in this context helps us understand how breast cancer grades are distributed among women of different ages. It shows us the likelihood of each grade occurring, with 3rd grade being the most common, followed by 2nd grade, and 1st grade being the least common in the dataset.
     """)
     
-    # Create a scatter plot with multiple stackable densities
+    
     custom_palette = "viridis"
     age_vs_grade_stack = sns.displot(data=df, x="Age", hue="Grade", multiple="stack", kind="kde", palette=custom_palette)
     
@@ -78,20 +78,17 @@ def section_3(df):
     
     st.markdown("Just a simple linear regression here... 🩺")
     
-    # Linear regression visualization
-    # Encode the 'T Stage' column (label encoding)
+    # Linear regression 
+    # Encode the 'T Stage' column
     label_encoder = LabelEncoder()
     df['T Stage '] = label_encoder.fit_transform(df['T Stage '])
     
-    # Select the relevant columns
     X = df[['T Stage ']]
     y = df['Tumor Size']
     
-    # Fit the linear regression model
     model = LinearRegression()
     model.fit(X, y)
     
-    # Predict tumor sizes
     df['Predicted Tumor Size'] = model.predict(X)
     
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -109,7 +106,7 @@ def section_4(df):
     As the T Stage increases, indicating more advanced cancer, the average predicted tumor size also tends to increase. This aligns with the medical understanding that more advanced tumors are generally larger. 🩺
     """)
     
-    # Encode the 'T Stage ' column using label encoding
+    # Encode the 'T Stage ' column
     label_encoder = LabelEncoder()
     df['T Stage '] = label_encoder.fit_transform(df['T Stage '])
     
@@ -123,16 +120,19 @@ def section_4(df):
     plt.ylabel('Average Predicted Tumor Size')
     plt.title('Average Predicted Tumor Size by T Stage  and Reginol Node Positive')
     
-    # Display the legend outside the box
     legend = ax.legend(title='Reginol Node Positive', loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=9)
     
     st.pyplot(plt)
 
 # Section 5: Interactive Plot Builder
 def create_scatterplot(df, x_column, y_column, color_column, title=None):
+    st.header("""
+    4. Feeling bored already?
+    """)
+    st.markdown("""Go ahead and explore the data yourself to uncover some intriguing insights!""")
+
     plt.figure(figsize=(10, 6))
 
-    # Filter the DataFrame to exclude rows with missing or invalid values in x_column and y_column
     df_filtered = df.dropna(subset=[x_column, y_column])
 
     sns.scatterplot(data=df_filtered, x=x_column, y=y_column, hue=color_column)
@@ -144,27 +144,40 @@ def create_scatterplot(df, x_column, y_column, color_column, title=None):
     plt.legend(title=color_column)
     st.pyplot(plt)
 
-# Main function to run the Streamlit app
 def main():
-    df = load_data()  # Load the breast cancer dataset
+    df = load_data() 
 
     st.title("Breast Cancer Analysis")
 
-    section_1(df)  # Section 1: Differentiate vs Grade
-    section_2(df)  # Section 2: Age vs Grades: Density
-    section_3(df)  # Section 3: Tumor Size vs T Stage
-    section_4(df)  # Section 4: Bars Visualization
+    section_1(df)
+    section_2(df)
+    section_3(df)
+    section_4(df)
 
     # Sidebar for interactive plot selection
     st.sidebar.title('Column Selection')
     x_column = st.sidebar.selectbox('Select X-axis Column:', df.columns)
     y_column = st.sidebar.selectbox('Select Y-axis Column:', df.columns)
     color_column = st.sidebar.selectbox('Select Color Column (for color coding):', df.columns)
+    
+    # Add interactive widgets
+    min_x = st.sidebar.slider(f'Min {x_column}', float(df[x_column].min()), float(df[x_column].max()))
+    max_x = st.sidebar.slider(f'Max {x_column}', float(df[x_column].min()), float(df[x_column].max()))
+    filter_checkbox = st.sidebar.checkbox('Apply Filter')
+    reset_button = st.sidebar.button('Reset Filters')
 
-    create_scatterplot(df, x_column, y_column, color_column, f'Scatter Plot: {x_column} vs. {y_column}')
+    if filter_checkbox:
+        df_filtered = df[(df[x_column] >= min_x) & (df[x_column] <= max_x)]
+    else:
+        df_filtered = df
+
+    create_scatterplot(df_filtered, x_column, y_column, color_column, f'Scatter Plot: {x_column} vs. {y_column}')
     
     st.write('## Data Table')
-    st.dataframe(df)
+    st.dataframe(df_filtered)
+    
+    if reset_button:
+        st.experimental_rerun()
 
 if __name__ == '__main__':
     main()

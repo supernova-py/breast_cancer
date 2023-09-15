@@ -178,6 +178,61 @@ def section_6(df):
     plt.title("Heatmap: Relationship Between Race, Marital Status, and Age: Weak correlation")
     st.pyplot(plt)
 
+#Tumor Size vs. Survival Months
+def section_7(df):
+    st.header("Tumor Size vs. Survival Months")
+    fig, ax = plt.subplots()
+
+    # Create scatter plot points for "Dead" and "Alive" status
+    df_dead = df[df['Status'] == 'Dead']
+    df_alive = df[df['Status'] == 'Alive']
+    
+    ax.scatter(df_dead['Tumor Size'], df_dead['Survival Months'], alpha=0.3, label='Dead', color='red')
+    ax.scatter(df_alive['Tumor Size'], df_alive['Survival Months'], alpha=0.3, label='Alive', color='green')
+
+    ax.set_xlabel('Tumor Size')
+    ax.set_ylabel('Survival Months')
+    
+    # Add a legend
+    ax.legend()
+
+    st.pyplot(fig)
+
+
+def section_8(df):
+    st.header("Progesterone Status vs. Estrogen Status")
+
+    # Create a cross-tabulation of Progesterone Status and Estrogen Status
+    crosstab = pd.crosstab(df['Progesterone Status'], df['Estrogen Status'])
+
+    # Plot a grouped bar chart
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(crosstab, annot=True, cmap="YlGnBu", fmt="d", ax=ax)
+
+    ax.set_xlabel("Estrogen Status")
+    ax.set_ylabel("Progesterone Status")
+    ax.set_title("Progesterone Status vs. Estrogen Status")
+
+    st.pyplot(fig)
+
+def section_9(df, x_variable, y_variable):
+    st.header(f"Scatterplot: {x_variable} vs. {y_variable} (Regional Node Examined)")
+
+    # Create a scatterplot
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.stripplot(x=x_variable, y='Regional Node Examined', data=df, jitter=True, palette='Set1')
+
+    ax.set_xlabel(x_variable)
+    ax.set_ylabel('Regional Node Examined')
+    ax.set_title(f"{x_variable} vs. Regional Node Examined")
+
+    st.pyplot(fig)
+
+# Assuming you have loaded your DataFrame 'data' from your CSV
+# You can choose 'Progesterone Status' or 'Estrogen Status' as x_variable
+
+
+
 def main():
     df = load_data() 
 
@@ -189,6 +244,9 @@ def main():
     section_4(df)
     section_5(df)
     section_6(df)
+    section_7(df)
+    section_8(df)
+    section_9(df, x_variable='Progesterone Status', y_variable='Regional Node Examined')
 
     # Sidebar for interactive plot selection
     st.sidebar.title('Paragraph X: Column Selector')

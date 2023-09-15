@@ -6,6 +6,7 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import LabelEncoder
 
+
 # Set the page title and author
 st.set_page_config(page_title="Breast Cancer Analysis", page_icon="✅")
 st.markdown("Developed by __supernova__: [GitHub](https://github.com/supernova-py)")
@@ -124,7 +125,7 @@ def section_4(df):
     
     st.pyplot(plt)
 
-# Section 5: Interactive Plot Builder
+#Interactive Plot Builder
 def create_scatterplot(df, x_column, y_column, color_column, title=None):
     st.header("""
     4. Feeling bored already?
@@ -144,6 +145,39 @@ def create_scatterplot(df, x_column, y_column, color_column, title=None):
     plt.legend(title=color_column)
     st.pyplot(plt)
 
+# Define a function to create and display the survival status pie chart
+def section_5(df):
+    st.header("4. Survival Analysis")
+
+    # Create a scatter plot with two clusters (Dead or Alive)
+    st.subheader("Survival Analysis: Survival Months vs. Age")
+
+    # Filter data for Dead and Alive status
+    df_dead = df[df["Status"] == "Dead"]
+    df_alive = df[df["Status"] == "Alive"]
+
+    # Create scatter plot
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df_dead, x="Survival Months", y="Age", label="Dead", alpha=0.7)
+    sns.scatterplot(data=df_alive, x="Survival Months", y="Age", label="Alive", alpha=0.7)
+    plt.xlabel("Survival Months")
+    plt.ylabel("Age")
+    plt.title("Survival Analysis")
+    plt.legend()
+    st.pyplot(plt)
+
+def section_6(df):
+    st.header("6. Heatmap Analysis: Social Engineering")
+
+    # Select relevant columns for the heatmap
+    heatmap_data = df[['Race', 'Marital Status', 'Age']]
+
+    # Create a heatmap
+    plt.figure(figsize=(10, 6))
+    heatmap = sns.heatmap(heatmap_data.pivot_table(index='Race', columns='Marital Status', values='Age'), cmap="YlGnBu", annot=True)
+    plt.title("Heatmap: Relationship Between Race, Marital Status, and Age: Weak correlation")
+    st.pyplot(plt)
+
 def main():
     df = load_data() 
 
@@ -153,9 +187,11 @@ def main():
     section_2(df)
     section_3(df)
     section_4(df)
+    section_5(df)
+    section_6(df)
 
     # Sidebar for interactive plot selection
-    st.sidebar.title('Column Selection')
+    st.sidebar.title('Paragraph X: Column Selector')
     x_column = st.sidebar.selectbox('Select X-axis Column:', df.columns)
     y_column = st.sidebar.selectbox('Select Y-axis Column:', df.columns)
     color_column = st.sidebar.selectbox('Select Color Column (for color coding):', df.columns)
